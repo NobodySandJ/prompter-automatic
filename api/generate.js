@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     const { prompt, isJson } = req.body;
     
     // Ambil API Key dari Environment Variable yang aman
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.AIzaSyD6kSeINJXXn-098S1BijT_VtnQjMdAaBQ;
 
     if (!apiKey) {
       throw new Error("API Key tidak ditemukan.");
