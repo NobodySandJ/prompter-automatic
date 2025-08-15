@@ -1,11 +1,7 @@
 // File: /api/generate.js
 // Ini adalah kode backend yang akan berjalan di server Vercel.
 
-export default async function handler(req, res) {
-  // Hanya izinkan metode POST
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
+module.exports = async (req, res) => {
 
   try {
     const { prompt, isJson } = req.body;
