@@ -1,4 +1,4 @@
-// File: /api/generate.js (Versi Revisi untuk OpenAI)
+// File: /api/generate.js (Versi Revisi untuk Groq)
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -7,14 +7,13 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Input dari frontend tetap sama
     const { prompt, isJson } = req.body;
 
-    // 1. Mengambil API Key yang berbeda dari Vercel
-    const apiKey = process.env.OPENAI_API_KEY; 
+    // 1. Mengambil API Key Groq dari Vercel
+    const apiKey = process.env.GROQ_API_KEY; 
 
     if (!apiKey) {
-      console.error("OPENAI_API_KEY tidak diatur.");
+      console.error("GROQ_API_KEY tidak diatur.");
       return res.status(500).json({ message: "Konfigurasi server tidak lengkap." });
     }
     
@@ -22,16 +21,15 @@ module.exports = async (req, res) => {
       return res.status(400).json({ message: 'Input prompt tidak boleh kosong.' });
     }
 
-    // 2. Menggunakan URL Endpoint OpenAI
-    const apiUrl = 'https://api.openai.com/v1/chat/completions';
+    // 2. Menggunakan URL Endpoint Groq
+    const apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
-    // 3. Membuat Payload dengan format yang sesuai untuk OpenAI
+    // 3. Membuat Payload (mirip OpenAI)
     const payload = {
-      model: "gpt-4o", // Memilih model AI yang ingin dipakai
+      model: "llama3-8b-8192", // Contoh model yang tersedia di Groq
       messages: [{ "role": "user", "content": prompt }],
     };
 
-    // Jika ingin response dalam format JSON (bisa disesuaikan)
     if (isJson) {
       payload.response_format = { "type": "json_object" };
     }
@@ -40,7 +38,6 @@ module.exports = async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // OpenAI menggunakan format otorisasi "Bearer"
         'Authorization': `Bearer ${apiKey}` 
       },
       body: JSON.stringify(payload),
@@ -49,16 +46,15 @@ module.exports = async (req, res) => {
     const responseData = await apiResponse.json();
 
     if (!apiResponse.ok) {
-      console.error("Error dari OpenAI API:", responseData);
+      console.error("Error dari Groq API:", responseData);
       const errorMessage = responseData?.error?.message || `HTTP error! Status: ${apiResponse.status}`;
       return res.status(apiResponse.status).json({ message: errorMessage });
     }
     
-    // 4. Mengambil hasil dari struktur response OpenAI
+    // Mengambil hasil dari struktur response Groq (sama seperti OpenAI)
     const resultText = responseData.choices[0].message.content;
 
     // Mengemas ulang agar format output sama seperti sebelumnya
-    // Ini agar frontend tidak perlu diubah
     const finalResponse = {
         candidates: [{
             content: {
